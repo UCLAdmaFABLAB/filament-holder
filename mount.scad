@@ -2,7 +2,7 @@ include <constants.scad>
 
 // all units are in inches
 
-DRAW_PARTS = true;
+DRAW_PARTS = false;
 MATERIAL_THICKNESS = .5;
 
 PART_SPACING = 1;
@@ -20,7 +20,7 @@ SUPPORT_WIDTH = 6;
 SUPPORT_HEIGHT = BASE_HEIGHT + SPOOL_DIA / 2 + SPOOL_CLEARANCE + ROD_INSET;
 
 FILAMENT_DIA = 1 / 4;
-FILAMENT_INSET = 1.5;
+FILAMENT_INSET = 1.25;
 FILAMENT_HEIGHT = SPOOL_CLEARANCE + 1;
 
 GUIDE_WIDTH = 3;
@@ -45,11 +45,14 @@ module base() {
 }
 
 module guide() {
+  slot_h = GUIDE_HEIGHT - 2 * FILAMENT_INSET;
   difference() {
     cube([GUIDE_WIDTH, GUIDE_HEIGHT, MATERIAL_THICKNESS]);
-    translate([GUIDE_WIDTH / 2 - FILAMENT_DIA / 2, GUIDE_HEIGHT - FILAMENT_INSET + d, -d])
+    translate([GUIDE_WIDTH / 2 - FILAMENT_DIA / 2, FILAMENT_INSET + d, -d])
     union() {
-      cube([FILAMENT_DIA, FILAMENT_INSET, MATERIAL_THICKNESS + d2]);
+      cube([FILAMENT_DIA, slot_h, MATERIAL_THICKNESS + d2]);
+      translate([FILAMENT_DIA / 2, slot_h, 0])
+        cylinder(d = FILAMENT_DIA, h = MATERIAL_THICKNESS + d2);
       translate([FILAMENT_DIA / 2, 0, 0])
         cylinder(d = FILAMENT_DIA, h = MATERIAL_THICKNESS + d2);
     }
