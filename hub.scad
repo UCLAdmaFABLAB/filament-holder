@@ -1,12 +1,14 @@
 include <constants.scad>
 // all units are in mm
 
+ROD_DIA_MM = inch_to_mm(ROD_DIA) + 1;
 MAJOR_DIA = inch_to_mm(SPOOL_INNER_DIA + 1);
-MINOR_DIA = inch_to_mm(.5);
-ROD_DIA_MM = inch_to_mm(ROD_DIA);
+MINOR_DIA = ROD_DIA_MM;
 
 HUB_DEPTH = inch_to_mm(1);
 SCREW_LENGTH = inch_to_mm(.5);
+SCREW_DIA = inch_to_mm(0.15);
+SCREW_HEAD_DIA = inch_to_mm(0.3);
 
 module place_mount_screws(dist, n = 4) {
   i = 360/n;
@@ -31,9 +33,9 @@ difference() {
     cylinder(d = ROD_DIA_MM, h = HUB_DEPTH + d2, $fn = 256);
   770_mount() {
     //threads
-    cylinder(d=inch_to_mm(0.135), h=SCREW_LENGTH);
+    cylinder(d=SCREW_DIA, h=SCREW_LENGTH);
     //head
     translate([0, 0, SCREW_LENGTH - d])
-      cylinder(d=inch_to_mm(0.25), h=HUB_DEPTH - SCREW_LENGTH);
+      cylinder(d=SCREW_HEAD_DIA, h=HUB_DEPTH - SCREW_LENGTH);
   }
 }
