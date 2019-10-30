@@ -1,16 +1,11 @@
-// units are in inches
+include <constants.scad>
 
-DRAW_PARTS = false;
+// all units are in inches
+
+DRAW_PARTS = true;
 MATERIAL_THICKNESS = .5;
-d = .01;
-d2 = d * 2;
-$fn = 64;
 
 PART_SPACING = 1;
-
-SPOOL_DIA = 14;
-SPOOL_DEPTH = 5.5;
-SPOOL_CLEARANCE = 1.5;
 
 FIT_CLEARANCE = 1 / 32;
 
@@ -18,7 +13,6 @@ BASE_LENGTH = SPOOL_DIA + 2 * SPOOL_CLEARANCE;
 BASE_DEPTH = SPOOL_DEPTH + 2 * SPOOL_CLEARANCE;
 BASE_HEIGHT = 2 * MATERIAL_THICKNESS;
 
-ROD_DIA = 3 / 8;
 ROD_CLEARANCE = 1/16;
 ROD_INSET = 1.5;
 
@@ -77,21 +71,24 @@ module support() {
 }
 
 if (DRAW_PARTS) {
-  support();
-  translate([SUPPORT_WIDTH + PART_SPACING, 0, 0])
+  projection(cut=true)
+  union() {
     support();
+    translate([SUPPORT_WIDTH + PART_SPACING, 0, 0])
+      support();
 
-  translate([0, SUPPORT_HEIGHT + PART_SPACING, 0])
-    base();
+    translate([0, SUPPORT_HEIGHT + PART_SPACING, 0])
+      base();
 
-  translate([0, SUPPORT_HEIGHT + PART_SPACING + BASE_DEPTH + PART_SPACING, 0])
-    base();
+    translate([0, SUPPORT_HEIGHT + PART_SPACING + BASE_DEPTH + PART_SPACING, 0])
+      base();
 
-  translate([2 * (SUPPORT_WIDTH + PART_SPACING), 0, 0])
-    guide();
+    translate([2 * (SUPPORT_WIDTH + PART_SPACING), 0, 0])
+      guide();
 
-  translate([2 * (SUPPORT_WIDTH + PART_SPACING), GUIDE_HEIGHT + PART_SPACING, 0])
-    guide();
+    translate([2 * (SUPPORT_WIDTH + PART_SPACING), GUIDE_HEIGHT + PART_SPACING, 0])
+      guide();
+  }
 } else {
   base();
 
