@@ -8,6 +8,6 @@ ROD_DIA = 3 / 8;
 
 d = .01;
 d2 = d * 2;
-$fn = 64;
+$fn = 256;
 
 function inch_to_mm(inches) = inches * 25.4;
