@@ -2,12 +2,12 @@ include <constants.scad>
 
 // all units are in inches
 
-DRAW_PARTS = false;
-MATERIAL_THICKNESS = .5;
+DRAW_PARTS = true;
+MATERIAL_THICKNESS = .508;
 
 PART_SPACING = 1;
 
-FIT_CLEARANCE = 1 / 32;
+FIT_CLEARANCE = 0.001;
 
 BASE_LENGTH = SPOOL_DIA + 2 * SPOOL_CLEARANCE;
 BASE_DEPTH = SPOOL_DEPTH + 2 * SPOOL_CLEARANCE;
@@ -20,8 +20,8 @@ SUPPORT_WIDTH = 6;
 SUPPORT_HEIGHT = BASE_HEIGHT + SPOOL_DIA / 2 + SPOOL_CLEARANCE + ROD_INSET;
 
 FILAMENT_DIA = 1 / 4;
-FILAMENT_INSET = 1.25;
-FILAMENT_HEIGHT = SPOOL_CLEARANCE + 1;
+FILAMENT_INSET = 1;
+FILAMENT_HEIGHT = SPOOL_CLEARANCE + (SPOOL_DIA - SPOOL_HUB_DIA) / 2; //Dist from base to hub of spool
 
 GUIDE_WIDTH = 3;
 GUIDE_HEIGHT = BASE_HEIGHT + FILAMENT_HEIGHT + FILAMENT_INSET;
@@ -61,35 +61,37 @@ module guide() {
 
 module support() {
   slot_w = ROD_DIA + 2 * ROD_CLEARANCE;
+  slot_d = MATERIAL_THICKNESS / 2 + d2;
   difference() {
     cube([SUPPORT_WIDTH, SUPPORT_HEIGHT, MATERIAL_THICKNESS]);
     //slot for rod
-    translate([SUPPORT_WIDTH / 2 - ROD_DIA / 2 - ROD_CLEARANCE, SUPPORT_HEIGHT - ROD_CLEARANCE - ROD_INSET - ROD_DIA / 2, -d])
+    translate([SUPPORT_WIDTH / 2 - ROD_DIA / 2 - ROD_CLEARANCE, SUPPORT_HEIGHT - ROD_CLEARANCE - ROD_INSET - ROD_DIA / 2, slot_d - d])
     union() {
-      cube([slot_w, ROD_INSET + ROD_DIA, MATERIAL_THICKNESS + d2]);
+      cube([slot_w, ROD_INSET + ROD_DIA, slot_d]);
       translate([slot_w / 2, 0, 0])
       cylinder(d = ROD_DIA + 2 * ROD_CLEARANCE, h = MATERIAL_THICKNESS + d2, $fn=128);
     }
   }
 }
 
+module rod() {
+  translate([BASE_LENGTH / 2, MATERIAL_THICKNESS/2, SUPPORT_HEIGHT - ROD_CLEARANCE - ROD_INSET ])
+  color("red")
+  rotate([-90, 0, 0])
+  cylinder(d = ROD_DIA + 2 * ROD_CLEARANCE, h = ROD_LENGTH, $fn=128);
+}
+
 if (DRAW_PARTS) {
   projection(cut=true)
   union() {
     support();
-    translate([SUPPORT_WIDTH + PART_SPACING, 0, 0])
+    translate([SUPPORT_WIDTH + PART_SPACING, 0, - MATERIAL_THICKNESS + d])
       support();
 
     translate([0, SUPPORT_HEIGHT + PART_SPACING, 0])
       base();
 
-    translate([0, SUPPORT_HEIGHT + PART_SPACING + BASE_DEPTH + PART_SPACING, 0])
-      base();
-
     translate([2 * (SUPPORT_WIDTH + PART_SPACING), 0, 0])
-      guide();
-
-    translate([2 * (SUPPORT_WIDTH + PART_SPACING), GUIDE_HEIGHT + PART_SPACING, 0])
       guide();
   }
 } else {
@@ -98,8 +100,9 @@ if (DRAW_PARTS) {
   translate([0, 0, MATERIAL_THICKNESS])
     base();
 
-  translate([(BASE_LENGTH / 2 - SUPPORT_WIDTH / 2), MATERIAL_THICKNESS, 0])
+  translate([(BASE_LENGTH / 2 - SUPPORT_WIDTH / 2), 0, 0])
   rotate([90, 0, 0])
+  mirror([0, 0, 1])
     support();
 
   translate([BASE_LENGTH / 2 - SUPPORT_WIDTH / 2, BASE_DEPTH , 0])
@@ -109,4 +112,6 @@ if (DRAW_PARTS) {
   translate([0, BASE_DEPTH / 2 - GUIDE_WIDTH / 2, 0])
   rotate([90, 0, 90])
   guide();
+
+  rod();
 }
