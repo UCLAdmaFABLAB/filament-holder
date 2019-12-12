@@ -17,6 +17,8 @@ module hub() {
       translate([0, 0, -d])
         cylinder(d=SCREW_DIA, h=ARM_THICKNESS + d2);
     }
+    translate([0, 0, -d])
+    cylinder(d = ROD_DIA_MM, h = ARM_THICKNESS + d2, $fn = 256);
   }
 }
 
