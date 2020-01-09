@@ -2,7 +2,7 @@ include <constants.scad>
 
 // all units are in inches
 
-DRAW_PARTS = true;
+DRAW_PARTS = false;
 MATERIAL_THICKNESS = .508;
 
 PART_SPACING = 1;
@@ -113,5 +113,5 @@ if (DRAW_PARTS) {
   rotate([90, 0, 90])
   guide();
 
-  rod();
+  //rod();
 }
